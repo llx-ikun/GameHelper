@@ -1,0 +1,31 @@
+# 构建产物
+bin/
+obj/
+dist/
+publish/
+
+# GitHub Release 打包产物（zip 与暂存目录）
+release/
+release-stage/
+
+# 运行时生成的日志与报告
+日志/
+*.csv
+!tools/*.csv
+
+# 调试数据 / 采集原始输出
+PresentMon-*.csv
+
+# 构建日志
+构建日志.txt
+
+# IDE / 编辑器
+.vs/
+.vscode/
+*.user
+*.suo
+
+# 系统文件
+Thumbs.db
+Desktop.ini
+.DS_Store

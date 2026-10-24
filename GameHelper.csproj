@@ -1,0 +1,65 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    游戏助手
+    ==================================================================
+    原生 WinForms 应用，不依赖任何 NuGet 包：
+      * 显卡数据     -> nvidia-smi（与本机驱动随附）
+      * 进程显存     -> PDH 计数器 \GPU Process Memory(*)\Local|Shared Usage
+                        （直接 P/Invoke pdh.dll，避开 PerformanceCounter 包）
+      * 物理内存     -> GlobalMemoryStatusEx（避开 WMI，快且无依赖）
+
+    发布为自包含单文件 exe：见 build.ps1
+  -->
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+
+    <AssemblyName>游戏助手</AssemblyName>
+    <RootNamespace>GameHelper</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <AssemblyTitle>游戏助手</AssemblyTitle>
+    <Product>游戏助手</Product>
+    <Description>显存看护、性能监控与游戏目录清理</Description>
+    <Company>本地工具</Company>
+    <Copyright>本地工具</Copyright>
+    <Version>2.0.0</Version>
+    <FileVersion>2.0.0.0</FileVersion>
+    <NeutralLanguage>zh-Hans</NeutralLanguage>
+
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <NoWarn>$(NoWarn);CA1416;CA1305;CA1307</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 同一个 .ico 既做 exe 图标，也内嵌为托管资源，供窗体标题栏使用 -->
+    <EmbeddedResource Include="app.ico" LogicalName="app.ico" />
+
+    <!--
+      PresentMon 内嵌为资源。
+
+      为什么不只是一个放在 tools\ 里的附属文件：发布产物是个单文件 exe，
+      用户很可能只把这一个 exe 拷走。附属文件一旦没跟着走，帧数会**静默地**
+      一直不可用 —— 既不报错也不提示，功能就这么消失了，极难排查。
+      内嵌后运行时按需解到 %LOCALAPPDATA%，单文件也能自给自足。
+
+      磁盘上若已有 tools\PresentMon-x64.exe 仍然优先用它（见 FrameTracker），
+      方便替换成更新版本。
+    -->
+    <EmbeddedResource Include="tools\PresentMon-x64.exe" LogicalName="PresentMon-x64.exe" />
+  </ItemGroup>
+
+</Project>
